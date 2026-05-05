@@ -2,8 +2,9 @@ import mysql.connector
 
 def conectar():
     return mysql.connector.connect(
-        host="localhost",
-        user="root",          
-        password="toor",      
-        database="inventario_ufg" 
+        host="gateway01.us-east-1.prod.aws.tidbcloud.com",
+        port=4000,
+        user="3TGwmX9GJtH7Xoc.root",
+        password="qJYVUDm4T1Gzcx2J",  
+        database="inventario_ufg"
     )
