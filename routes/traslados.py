@@ -3,6 +3,39 @@ from db import conectar
 
 traslados_bp = Blueprint('traslados', __name__)
 
+@traslados_bp.route('/buscar_activo', methods=['GET'])
+def buscar_activo():
+    if 'usuario' not in session:
+        return {"error": "No autorizado"}, 401
+
+    codigo = request.args.get('codigo')
+    if not codigo:
+        return {"error": "Código requerido"}, 400
+
+    conn = conectar()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT 
+            a.codigo,
+            a.serie,
+            a.nombre,
+            ar.nombre_area AS area,
+            r.nombre AS responsable
+        FROM activos_fijos a
+        LEFT JOIN areas ar ON a.id_area = ar.id_area
+        LEFT JOIN responsables r ON a.id_responsable = r.id_responsable
+        WHERE a.codigo = %s
+    """, (codigo,))
+
+    activo = cursor.fetchone()
+    conn.close()
+
+    if not activo:
+        return {"error": "Activo no encontrado"}
+
+    return activo
+
 @traslados_bp.route('/traslados', methods=['GET', 'POST'])
 def traslados():
 

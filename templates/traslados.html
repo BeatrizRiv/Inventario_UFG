@@ -12,14 +12,15 @@
 
     <input type="hidden" name="codigo" id="codigo_hidden" required>
 
-    <div class="card">
-        <h3>Información del activo</h3>
+ <div class="card">
+    <h3>Información del activo</h3>
 
-        <p><b>Código:</b> <span id="info_codigo">-</span></p>
-        <p><b>Nombre:</b> <span id="info_nombre">-</span></p>
-        <p><b>Área:</b> <span id="info_area">-</span></p>
-        <p><b>Responsable:</b> <span id="info_responsable">-</span></p>
-    </div>
+    <p><b>Código:</b> <span id="info_codigo">-</span></p>
+    <p><b>Serie:</b> <span id="info_serie">-</span></p>
+    <p><b>Nombre:</b> <span id="info_nombre">-</span></p>
+    <p><b>Área:</b> <span id="info_area">-</span></p>
+    <p><b>Responsable:</b> <span id="info_responsable">-</span></p>
+</div>
 
     <div class="card">
         <h3>Actualizar</h3>
@@ -109,6 +110,7 @@ function buscarActivo() {
 
         document.getElementById("codigo_hidden").value = codigo;
         document.getElementById("info_codigo").innerText = data.codigo;
+        document.getElementById("info_serie").innerText = data.serie;
         document.getElementById("info_nombre").innerText = data.nombre;
         document.getElementById("info_area").innerText = data.area;
         document.getElementById("info_responsable").innerText = data.responsable;
