@@ -20,6 +20,7 @@ def busqueda():
         cursor.execute("""
             SELECT 
                 a.codigo,
+                a.serie,       
                 a.nombre,
                 a.estado,
                 ar.nombre_area,
@@ -27,8 +28,8 @@ def busqueda():
             FROM activos_fijos a
             LEFT JOIN areas ar ON a.id_area = ar.id_area
             LEFT JOIN responsables r ON a.id_responsable = r.id_responsable
-            WHERE a.codigo LIKE %s OR a.nombre LIKE %s
-        """, (f"%{dato}%", f"%{dato}%"))
+            WHERE a.codigo LIKE %s OR a.serie LIKE %s OR a.nombre LIKE %s
+        """, (f"%{dato}%", f"%{dato}%", f"%{dato}%"))
 
         resultados = cursor.fetchall()
 
