@@ -84,6 +84,44 @@
       from { opacity: 0; transform: translateY(-20px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
+    .password-toggle {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #888;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.3s;
+      width: 24px;
+      height: 24px;
+    }
+    .password-toggle:hover {
+      color: #333;
+    }
+    .password-toggle svg {
+      position: absolute;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .password-toggle .eye-open {
+      opacity: 0;
+      transform: scale(0.5) rotate(-45deg);
+    }
+    .password-toggle .eye-closed {
+      opacity: 1;
+      transform: scale(1) rotate(0);
+    }
+    .password-toggle.show-pwd .eye-open {
+      opacity: 1;
+      transform: scale(1) rotate(0);
+    }
+    .password-toggle.show-pwd .eye-closed {
+      opacity: 0;
+      transform: scale(1.5) rotate(45deg);
+    }
   </style>
 </head>
 <body>
@@ -106,9 +144,34 @@
 
     <form method="POST">
       <input type="text" name="usuario" placeholder="Usuario" required>
-      <input type="password" name="password" placeholder="Contraseña" required>
+      <div style="position: relative; width: 100%; max-width: 320px; margin: 12px 0;">
+        <input type="password" name="password" id="password" placeholder="Contraseña" required style="margin: 0; width: 100%; box-sizing: border-box; padding-right: 40px;">
+        <div id="togglePassword" class="password-toggle" title="Mostrar/Ocultar contraseña">
+          <!-- Ojo cerrado (password oculto) -->
+          <svg class="eye-closed" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+            <line x1="1" y1="1" x2="23" y2="23"></line>
+          </svg>
+          <!-- Ojo abierto (password visible) -->
+          <svg class="eye-open" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </div>
+      </div>
       <button type="submit">Ingresar</button>
     </form>
+
+    <script>
+      const togglePassword = document.getElementById('togglePassword');
+      const password = document.getElementById('password');
+
+      togglePassword.addEventListener('click', function () {
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+        this.classList.toggle('show-pwd');
+      });
+    </script>
 
   </div>
 

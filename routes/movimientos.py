@@ -14,6 +14,7 @@ def movimientos():
     cursor = conn.cursor(dictionary=True)
 
     tipo = request.values.get('tipo')
+    fecha = request.values.get('fecha')
 
     query = """
         SELECT 
@@ -34,6 +35,10 @@ def movimientos():
     if tipo and tipo != "Todos":
         query += " AND m.tipo = %s"
         valores.append(tipo)
+
+    if fecha:
+        query += " AND DATE(m.fecha) = %s"
+        valores.append(fecha)
 
     query += " ORDER BY m.fecha DESC"
 

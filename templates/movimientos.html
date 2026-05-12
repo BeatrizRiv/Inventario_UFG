@@ -16,6 +16,7 @@
     <button type="submit">Filtrar</button>
 </form>
 
+{% if movimientos %}
 <table class="tabla">
     <tr>
         <th>Código</th>
@@ -37,6 +38,8 @@
                 <span class="badge traslado">Traslado</span>
             {% elif m.tipo == 'Retiro' %}
                 <span class="badge retiro">Retiro</span>
+            {% elif m.tipo == 'Actualización' %}
+                <span class="badge actualizacion">Actualización</span>
             {% endif %}
         </td>
 
@@ -47,6 +50,12 @@
     </tr>
     {% endfor %}
 </table>
+{% else %}
+<div class="mensaje-vacio" style="text-align: center; padding: 40px; background: white; border-radius: 10px; color: #666; border: 1px dashed #ccc; margin-top: 20px;">
+    <h3 style="color: #0056A6; margin-bottom: 10px;">No se encontraron resultados</h3>
+    <p style="font-size: 16px;">No hay registros de movimientos (ingresos, traslados o retiros) para la fecha y los filtros seleccionados.</p>
+</div>
+{% endif %}
 
 <style>
 
