@@ -25,6 +25,10 @@ def retiros():
 
         id_activo = activo['id_activo']
 
+        cursor.execute("SELECT nombre FROM responsables WHERE id_responsable=%s", (activo['id_responsable'],))
+        responsable_row = cursor.fetchone()
+        responsable_nombre = responsable_row['nombre'] if responsable_row else ''
+
         cursor.execute("""
             UPDATE activos_fijos SET estado='Retirado'
             WHERE id_activo=%s
@@ -33,7 +37,7 @@ def retiros():
         cursor.execute("""
             INSERT INTO movimientos (tipo, id_activo, detalle)
             VALUES ('Retiro', %s, %s)
-        """, (id_activo, motivo))
+        """, (id_activo, f'{motivo}. Responsable: {responsable_nombre}'))
 
         conn.commit()
         conn.close()

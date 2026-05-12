@@ -18,16 +18,17 @@
 
 <table class="tabla">
     <tr>
-        <th>ID</th>
+        <th>Código</th>
         <th>Tipo</th>
         <th>Activo</th>
         <th>Fecha</th>
         <th>Detalle</th>
+        <th>Responsable actual</th>
     </tr>
 
     {% for m in movimientos %}
     <tr>
-        <td>{{ m.id_movimiento }}</td>
+        <td>{{ m.codigo }}</td>
 
         <td>
             {% if m.tipo == 'Entrada' %}
@@ -42,6 +43,7 @@
         <td>{{ m.activo }}</td>
         <td>{{ m.fecha }}</td>
         <td>{{ m.detalle }}</td>
+        <td>{{ m.responsable_actual or '-' }}</td>
     </tr>
     {% endfor %}
 </table>
@@ -92,6 +94,8 @@
 .tabla td {
     padding: 10px;
     border-bottom: 1px solid #ddd;
+    white-space: normal;
+    height: auto;
 }
 
 .tabla tr:hover {

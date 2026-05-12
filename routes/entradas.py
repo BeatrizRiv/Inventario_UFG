@@ -54,10 +54,16 @@ def entradas():
             request.form['id_uso']
         ))
 
+        responsable_nombre = ''
+        for r in responsables:
+            if r['id_responsable'] == int(request.form['id_responsable']):
+                responsable_nombre = r['nombre']
+                break
+
         cursor.execute("""
             INSERT INTO movimientos (tipo, id_activo, detalle)
-            VALUES ('Entrada', LAST_INSERT_ID(), 'Ingreso de activo')
-        """)
+            VALUES ('Entrada', LAST_INSERT_ID(), %s)
+        """, (f'Ingreso de activo. Responsable: {responsable_nombre}',))
 
         conn.commit()
         conn.close()

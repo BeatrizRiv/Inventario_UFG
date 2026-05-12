@@ -3,6 +3,39 @@ from db import conectar
 
 traslados_bp = Blueprint('traslados', __name__)
 
+@traslados_bp.route('/buscar_activo', methods=['GET'])
+def buscar_activo():
+    if 'usuario' not in session:
+        return {"error": "No autorizado"}, 401
+
+    codigo = request.args.get('codigo')
+    if not codigo:
+        return {"error": "Código requerido"}, 400
+
+    conn = conectar()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT 
+            a.codigo,
+            a.serie,
+            a.nombre,
+            ar.nombre_area AS area,
+            r.nombre AS responsable
+        FROM activos_fijos a
+        LEFT JOIN areas ar ON a.id_area = ar.id_area
+        LEFT JOIN responsables r ON a.id_responsable = r.id_responsable
+        WHERE a.codigo = %s
+    """, (codigo,))
+
+    activo = cursor.fetchone()
+    conn.close()
+
+    if not activo:
+        return {"error": "Activo no encontrado"}
+
+    return activo
+
 @traslados_bp.route('/traslados', methods=['GET', 'POST'])
 def traslados():
 
@@ -34,6 +67,8 @@ def traslados():
         nuevo_responsable = request.form.get('id_responsable')
 
         detalle = ""
+        id_responsable_anterior = None
+        id_responsable_nuevo = None
 
         if nueva_area:
             cursor.execute(
@@ -43,11 +78,26 @@ def traslados():
             detalle += "Cambio de área. "
 
         if nuevo_responsable:
+            id_responsable_anterior = activo['id_responsable']
+            cursor.execute(
+                "SELECT nombre FROM responsables WHERE id_responsable=%s",
+                (id_responsable_anterior,)
+            )
+            anterior_row = cursor.fetchone()
+            responsable_anterior_nombre = anterior_row['nombre'] if anterior_row else ''
+
+            cursor.execute(
+                "SELECT nombre FROM responsables WHERE id_responsable=%s",
+                (nuevo_responsable,)
+            )
+            nuevo_row = cursor.fetchone()
+            responsable_nuevo_nombre = nuevo_row['nombre'] if nuevo_row else ''
+
             cursor.execute(
                 "UPDATE activos_fijos SET id_responsable=%s WHERE id_activo=%s",
                 (nuevo_responsable, id_activo)
             )
-            detalle += "Cambio de responsable."
+            detalle += f"Responsable: {responsable_anterior_nombre} -> {responsable_nuevo_nombre}."
 
         if detalle == "":
             conn.close()
