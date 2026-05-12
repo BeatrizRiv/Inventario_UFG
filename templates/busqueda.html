@@ -4,11 +4,13 @@
 
 <style>
 .estado {
-    padding: 5px 10px;
-    border-radius: 10px;
+    padding: 6px 12px;
+    border-radius: 20px;
     color: white;
     font-size: 12px;
     font-weight: bold;
+    display: inline-block;
+    letter-spacing: 0.5px;
 }
 
 .estado.disponible {
@@ -24,26 +26,8 @@
     color: black;
 }
 
-.estado.depreciado {
+.estado.depreciado, .estado.retirado, .estado.retiro {
     background-color: #dc3545;
-}
-
-/* Agrega más si hay otros estados, por ejemplo: */
-.estado.activo {
-    background-color: #007bff;  /* Asumiendo que "Activo" es similar a "En uso" (azul) */
-}
-
-.estado.entrada {
-    background-color: #28a745;  /* Verde para "Entrada" si es similar a "Disponible" */
-}
-
-.estado.traslado {
-    background-color: #ffc107;  /* Amarillo para "Traslado" */
-    color: black;
-}
-
-.estado.retiro {
-    background-color: #dc3545;  /* Rojo para "Retiro" */
 }
 </style>
 
@@ -51,48 +35,93 @@
 
 <div style="background:white; padding:20px; border-radius:15px; margin-bottom:20px;">
 
-    <form method="POST" style="display:flex; gap:10px;">
-        <input type="text" name="busqueda" placeholder="Buscar por código o nombre"
-               style="flex:1; padding:10px; border-radius:10px; border:1px solid #ccc;">
+    <form id="form-busqueda" method="POST" style="display:flex; gap:10px;">
+        <input type="text" id="input-busqueda" name="busqueda" placeholder="Buscar por código o nombre"
+               style="flex:1; padding:10px; border-radius:10px; border:1px solid #ccc; transition: all 0.3s ease; outline: none;">
         
-        <button style="background:#0056A6; color:white; border:none; padding:10px 20px; border-radius:10px;">
+        <button type="submit" style="background:#0056A6; color:white; border:none; padding:10px 20px; border-radius:10px; cursor: pointer; transition: background 0.3s;" onmouseover="this.style.background='#004683'" onmouseout="this.style.background='#0056A6'">
             Buscar
         </button>
     </form>
 
 </div>
 
-<div style="background:white; border-radius:15px; overflow:hidden;">
+<script>
+    document.getElementById('form-busqueda').addEventListener('submit', function(e) {
+        var input = document.getElementById('input-busqueda');
+        if (input.value.trim() === '') {
+            e.preventDefault(); // Evita que se envíe el formulario
+            
+            // Animación y cambio de color
+            input.style.border = '2px solid #dc3545';
+            input.style.backgroundColor = '#fff5f5';
+            input.placeholder = '⚠️ Por favor, ingrese un término para buscar...';
+            
+            // Quitar el foco para que se vea claro el placeholder y el color
+            input.blur();
 
-    <div style="background:#0056A6; color:white; padding:12px;">
-        Resultados
+            // Restaurar el estilo después de 3 segundos
+            setTimeout(function() {
+                input.style.border = '1px solid #ccc';
+                input.style.backgroundColor = 'white';
+                input.placeholder = 'Buscar por código o nombre';
+            }, 10000);
+        }
+    });
+
+    // Restaurar si el usuario empieza a escribir antes de los 3 segundos
+    document.getElementById('input-busqueda').addEventListener('input', function() {
+        this.style.border = '1px solid #ccc';
+        this.style.backgroundColor = 'white';
+        this.placeholder = 'Buscar por código o nombre';
+    });
+</script>
+
+<div style="background:white; border-radius:15px; overflow:hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+
+    <div style="background:#004683; color:white; padding:15px 20px; font-weight: bold; font-size: 16px; border-bottom: 3px solid #F29100;">
+        Resultados de la Búsqueda
     </div>
 
+    {% if resultados %}
     <table style="width:100%; border-collapse:collapse;">
-
-        <tr style="background:#f2f2f2;">
-            <th style="padding:10px;">Código</th>
-            <th>Nombre</th>
-            <th>Área</th>
-            <th>Responsable</th>
-            <th>Estado</th>
+        <tr style="background:#f8f9fa; border-bottom: 2px solid #eaeaea;">
+            <th style="padding:15px 20px; text-align: left; color: #555; font-size: 13px; text-transform: uppercase;">Código</th>
+            <th style="padding:15px 20px; text-align: left; color: #555; font-size: 13px; text-transform: uppercase;">Nombre</th>
+            <th style="padding:15px 20px; text-align: left; color: #555; font-size: 13px; text-transform: uppercase;">Área</th>
+            <th style="padding:15px 20px; text-align: left; color: #555; font-size: 13px; text-transform: uppercase;">Responsable</th>
+            <th style="padding:15px 20px; text-align: center; color: #555; font-size: 13px; text-transform: uppercase;">Estado</th>
         </tr>
 
         {% for r in resultados %}
-        <tr style="text-align:center;">
-            <td style="padding:10px;">{{ r.codigo }}</td>
-            <td>{{ r.nombre }}</td>
-            <td>{{ r.nombre_area }}</td>
-            <td>{{ r.responsable }}</td>
-            <td>
-                <span class="estado {{ r.estado|lower|replace(' ', '-') }}">
+        <tr style="border-bottom: 1px solid #f2f2f2; transition: background 0.2s;" onmouseover="this.style.background='#fdfdfd'" onmouseout="this.style.background='white'">
+            <td style="padding:15px 20px; font-weight: bold; color: #004683;">{{ r.codigo }}</td>
+            <td style="padding:15px 20px; color: #333;">{{ r.nombre }}</td>
+            <td style="padding:15px 20px; color: #666;">{{ r.nombre_area }}</td>
+            <td style="padding:15px 20px; color: #666;">{{ r.responsable }}</td>
+            <td style="padding:15px 20px; text-align: center;">
+                <span class="estado {{ (r.estado|string|lower|trim|replace(' ', '-')) }}">
                     {{ r.estado }}
                 </span>
             </td>
         </tr>
         {% endfor %}
-
     </table>
+    {% elif busqueda_realizada %}
+    <div style="padding: 80px 20px; text-align: center; background-color: #fffaf5;">
+        <div style="font-size: 50px; margin-bottom: 15px; opacity: 0.8;">😕</div>
+        <h3 style="margin: 0 0 10px 0; color: #F29100; font-size: 20px;">No se encontraron resultados</h3>
+        <p style="margin: 0; color: #666; font-size: 15px; max-width: 450px; margin-left: auto; margin-right: auto;">
+            No se encontró ningún activo que coincida con "<b>{{ dato_buscado }}</b>". Intente usar otras palabras clave o verifique la ortografía.
+        </p>
+    </div>
+    {% else %}
+    <div style="padding: 80px 20px; text-align: center; background-color: #fafbfc;">
+        <div style="font-size: 50px; margin-bottom: 15px; opacity: 0.6;">🔎</div>
+        <h3 style="margin: 0 0 10px 0; color: #004683; font-size: 20px;">Esperando consulta</h3>
+        <p style="margin: 0; color: #666; font-size: 15px; max-width: 400px; margin-left: auto; margin-right: auto;">Utilice el motor de búsqueda en la parte superior ingresando un código o nombre para encontrar coincidencias en el inventario.</p>
+    </div>
+    {% endif %}
 
 </div>
 
