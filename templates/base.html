@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Sistema de Inventario</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
 body {
@@ -113,7 +114,7 @@ body {
         </div>
 
         <div class="menu-item" onclick="toggleMenu('activo', this)">
-            Activo fijo <span class="arrow">▼</span>
+            <span><i class="fa-solid fa-box" style="margin-right: 8px;"></i>Activo fijo</span> <span class="arrow">▼</span>
         </div>
         <div id="activo" class="submenu">
             <a href="/gestion">Gestión general</a>
@@ -124,14 +125,14 @@ body {
         </div>
 
         <div class="menu-item" onclick="toggleMenu('reportes', this)">
-            Reportes <span class="arrow">▼</span>
+            <span><i class="fa-solid fa-file-contract" style="margin-right: 8px;"></i>Reportes</span> <span class="arrow">▼</span>
         </div>
         <div id="reportes" class="submenu">
             <a href="/reportes">Generar reportes</a>
         </div>
 
         <div class="menu-item" onclick="toggleMenu('busqueda', this)">
-            Búsqueda <span class="arrow">▼</span>
+            <span><i class="fa-solid fa-magnifying-glass" style="margin-right: 8px;"></i>Búsqueda</span> <span class="arrow">▼</span>
         </div>
         <div id="busqueda" class="submenu">
             <a href="/busqueda">Buscar activo</a>
@@ -139,8 +140,8 @@ body {
 
     </div>
 
-    <div class="logout" onclick="location.href='/logout'">
-         Cerrar sesión
+    <div class="logout" onclick="location.href='/logout'" title="Cerrar sesión">
+         <i class="fa-solid fa-right-from-bracket fa-lg"></i>
     </div>
 
 </div>

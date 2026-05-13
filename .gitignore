@@ -5,3 +5,5 @@ testDB.py
 
 routes/__pycache__/busqueda.cpython-314.pyc
 __pycache__/db.cpython-314.pyc
+routes/__pycache__/movimientos.cpython-314.pyc
+routes/__pycache__/busqueda.cpython-314.pyc
