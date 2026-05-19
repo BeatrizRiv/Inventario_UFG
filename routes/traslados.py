@@ -21,10 +21,13 @@ def buscar_activo():
             a.serie,
             a.nombre,
             ar.nombre_area AS area,
-            r.nombre AS responsable
+            r.nombre AS responsable,
+            u.nombre_uso AS uso,
+            a.estado
         FROM activos_fijos a
         LEFT JOIN areas ar ON a.id_area = ar.id_area
         LEFT JOIN responsables r ON a.id_responsable = r.id_responsable
+        LEFT JOIN usos_activo u ON a.id_uso = u.id_uso
         WHERE a.codigo = %s
     """, (codigo,))
 
@@ -38,7 +41,6 @@ def buscar_activo():
 
 @traslados_bp.route('/traslados', methods=['GET', 'POST'])
 def traslados():
-
     if 'usuario' not in session:
         return redirect(url_for('login.login'))
 
@@ -51,8 +53,14 @@ def traslados():
     cursor.execute("SELECT * FROM responsables WHERE estado=1")
     responsables = cursor.fetchall()
 
+    cursor.execute("SELECT * FROM usos_activo")
+    usos = cursor.fetchall()
+
+    estados = ['Disponible', 'En uso', 'Mantenimiento', 'Depreciado', 'Retirado']
+
     if request.method == 'POST':
-        codigo = request.form['codigo']
+        codigo = request.form.get('codigo')
+        descripcion_cambio = request.form.get('descripcion_cambio', '').strip()
 
         cursor.execute("SELECT * FROM activos_fijos WHERE codigo=%s", (codigo,))
         activo = cursor.fetchone()
@@ -65,55 +73,89 @@ def traslados():
 
         nueva_area = request.form.get('id_area')
         nuevo_responsable = request.form.get('id_responsable')
+        nuevo_uso = request.form.get('id_uso')
+        nuevo_estado = request.form.get('estado')
 
-        detalle = ""
-        id_responsable_anterior = None
-        id_responsable_nuevo = None
+        cambios = []
+        updates = []
+        valores_update = []
+        
+        if nueva_area and activo['id_area'] is not None and int(nueva_area) != activo['id_area'] or nueva_area and activo['id_area'] is None:
+            cursor.execute("SELECT nombre_area FROM areas WHERE id_area=%s", (nueva_area,))
+            row = cursor.fetchone()
+            nombre_n = row['nombre_area'] if row else ''
+            cambios.append(f"Área -> {nombre_n}")
+            updates.append("id_area=%s")
+            valores_update.append(nueva_area)
 
-        if nueva_area:
-            cursor.execute(
-                "UPDATE activos_fijos SET id_area=%s WHERE id_activo=%s",
-                (nueva_area, id_activo)
-            )
-            detalle += "Cambio de área. "
+        if nuevo_responsable and activo['id_responsable'] is not None and int(nuevo_responsable) != activo['id_responsable'] or nuevo_responsable and activo['id_responsable'] is None:
+            cursor.execute("SELECT nombre FROM responsables WHERE id_responsable=%s", (nuevo_responsable,))
+            row = cursor.fetchone()
+            nombre_n = row['nombre'] if row else ''
+            cambios.append(f"Responsable -> {nombre_n}")
+            updates.append("id_responsable=%s")
+            valores_update.append(nuevo_responsable)
 
-        if nuevo_responsable:
-            id_responsable_anterior = activo['id_responsable']
-            cursor.execute(
-                "SELECT nombre FROM responsables WHERE id_responsable=%s",
-                (id_responsable_anterior,)
-            )
-            anterior_row = cursor.fetchone()
-            responsable_anterior_nombre = anterior_row['nombre'] if anterior_row else ''
+        if nuevo_uso and activo['id_uso'] is not None and int(nuevo_uso) != activo['id_uso'] or nuevo_uso and activo['id_uso'] is None:
+            cursor.execute("SELECT nombre_uso FROM usos_activo WHERE id_uso=%s", (nuevo_uso,))
+            row = cursor.fetchone()
+            nombre_n = row['nombre_uso'] if row else ''
+            cambios.append(f"Uso -> {nombre_n}")
+            updates.append("id_uso=%s")
+            valores_update.append(nuevo_uso)
 
-            cursor.execute(
-                "SELECT nombre FROM responsables WHERE id_responsable=%s",
-                (nuevo_responsable,)
-            )
-            nuevo_row = cursor.fetchone()
-            responsable_nuevo_nombre = nuevo_row['nombre'] if nuevo_row else ''
+        if nuevo_estado and nuevo_estado != activo['estado']:
+            cambios.append(f"Estado -> {nuevo_estado}")
+            updates.append("estado=%s")
+            valores_update.append(nuevo_estado)
 
-            cursor.execute(
-                "UPDATE activos_fijos SET id_responsable=%s WHERE id_activo=%s",
-                (nuevo_responsable, id_activo)
-            )
-            detalle += f"Responsable: {responsable_anterior_nombre} -> {responsable_nuevo_nombre}."
-
-        if detalle == "":
+        # Validación silenciosa si no hubieron cambios
+        if not cambios:
             conn.close()
-            return "⚠️ No hiciste cambios"
+            return redirect(request.url)
+
+        count_cambios = len(cambios)
+        cambio_area_resp = any(c.startswith("Área") or c.startswith("Responsable") for c in cambios)
+        cambio_estado = any(c.startswith("Estado") for c in cambios)
+
+        if count_cambios >= 2:
+            tipo_mov = 'Varios'
+        elif cambio_estado:
+            tipo_mov = 'Estado'
+        elif cambio_area_resp:
+            tipo_mov = 'Traslado'
+        else:
+            tipo_mov = 'Actualización'
+
+        query_update = f"UPDATE activos_fijos SET {', '.join(updates)} WHERE id_activo=%s"
+        valores_update.append(id_activo)
+        cursor.execute(query_update, tuple(valores_update))
+
+        # AQUÍ ESTÁ LA MAGIA PARA EL MOTIVO OPCIONAL
+        if descripcion_cambio:
+            detalle_str = f"Cambio registrado. {', '.join(cambios)}. Motivo: {descripcion_cambio}"
+        else:
+            detalle_str = f"Cambio registrado. {', '.join(cambios)}."
 
         cursor.execute("""
-            INSERT INTO movimientos (tipo, id_activo, detalle)
-            VALUES ('Traslado', %s, %s)
-        """, (id_activo, detalle))
+            INSERT INTO movimientos (tipo, id_activo, detalle, usuario)
+            VALUES (%s, %s, %s, %s)
+        """, (tipo_mov, id_activo, detalle_str, session.get('usuario')))
 
         conn.commit()
         conn.close()
 
-        return redirect(url_for('movimientos.movimientos'))
+        # AQUÍ ESTÁ LA MAGIA PARA QUE SALGA EL POP-UP
+        return render_template("traslados.html", 
+                               exito=True, 
+                               areas=areas, 
+                               responsables=responsables, 
+                               usos=usos, 
+                               estados=estados)
 
     conn.close()
     return render_template("traslados.html",
                            areas=areas,
-                           responsables=responsables)
+                           responsables=responsables,
+                           usos=usos,
+                           estados=estados)

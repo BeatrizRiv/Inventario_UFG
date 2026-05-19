@@ -5,13 +5,13 @@
 
 <form method="POST" class="filtros">
     <select name="tipo">
-        <option>Todos</option>
-        <option>Entrada</option>
-        <option>Traslado</option>
-        <option>Retiro</option>
+        <option {% if filtro_tipo == 'Todos' or not filtro_tipo %}selected{% endif %}>Todos</option>
+        <option {% if filtro_tipo == 'Entrada' %}selected{% endif %}>Entrada</option>
+        <option {% if filtro_tipo == 'Traslado' %}selected{% endif %}>Traslado</option>
+        <option {% if filtro_tipo == 'Retiro' %}selected{% endif %}>Retiro</option>
     </select>
 
-    <input type="date" name="fecha">
+    <input type="date" name="fecha" value="{{ filtro_fecha or '' }}">
 
     <button type="submit">Filtrar</button>
 </form>
@@ -24,7 +24,7 @@
         <th>Activo</th>
         <th>Fecha</th>
         <th>Detalle</th>
-        <th>Responsable actual</th>
+        <th>Responsable del movimiento</th>
     </tr>
 
     {% for m in movimientos %}
@@ -46,7 +46,7 @@
         <td>{{ m.activo }}</td>
         <td>{{ m.fecha }}</td>
         <td>{{ m.detalle }}</td>
-        <td>{{ m.responsable_actual or '-' }}</td>
+        <td>{{ m.responsable_movimiento or '-' }}</td>
     </tr>
     {% endfor %}
 </table>

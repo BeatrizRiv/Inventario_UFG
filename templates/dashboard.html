@@ -6,21 +6,21 @@
     <div style="background-color: white; padding: 20px 40px; border-radius: 15px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-bottom: 4px solid #F29100; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
         
         <div>
-            <img src="/static/logo.png" alt="UFG Logo" style="height: 95px; width: auto; object-fit: contain;">
+            <img src="/static/logo.png" alt="UFG Logo" style="height: 130px; width: auto; object-fit: contain;">
         </div>
 
         <div style="display: inline-flex; align-items: center; gap: 12px; background-color: #e7f3ff; color: #004683; padding: 12px 30px; border-radius: 35px; font-size: 22px; font-weight: bold; border: 1px solid #cce5ff;">
-            <span>📊</span> PANEL DE CONTROL PRINCIPAL
+            <span style="display: flex; align-items: center;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg></span> PANEL DE CONTROL PRINCIPAL
         </div>
         
     </div> <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
 
         <div style="background: #004683; color: white; padding: 15px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 15px rgba(0,70,131,0.2);">
             <div>
-                <h4 style="margin: 0; font-weight: 400; opacity: 0.9; text-transform: uppercase; font-size: 11px; letter-spacing: 1px;">Total Inventario</h4>
+                <h4 style="margin: 0; font-weight: 400; opacity: 0.9; text-transform: uppercase; font-size: 11px; letter-spacing: 1px;">Activos totales</h4>
                 <h1 style="margin: 5px 0 0 0; font-size: 28px; font-weight: 800;">{{ total }}</h1>
             </div>
-            <div style="font-size: 30px; opacity: 0.8;">📦</div>
+            <div style="opacity: 0.8; display: flex; align-items: center;"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg></div>
         </div>
 
         <div style="background: #28a745; color: white; padding: 15px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 15px rgba(40,167,69,0.2);">
@@ -28,7 +28,7 @@
                 <h4 style="margin: 0; font-weight: 400; opacity: 0.9; text-transform: uppercase; font-size: 11px; letter-spacing: 1px;">En Operación</h4>
                 <h1 style="margin: 5px 0 0 0; font-size: 28px; font-weight: 800;">{{ activos }}</h1>
             </div>
-            <div style="font-size: 30px; opacity: 0.8;">✅</div>
+            <div style="opacity: 0.8; display: flex; align-items: center;"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></div>
         </div>
 
         <div style="background: #dc3545; color: white; padding: 15px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 15px rgba(220,53,69,0.2);">
@@ -36,7 +36,7 @@
                 <h4 style="margin: 0; font-weight: 400; opacity: 0.9; text-transform: uppercase; font-size: 11px; letter-spacing: 1px;">Bajas Registradas</h4>
                 <h1 style="margin: 5px 0 0 0; font-size: 28px; font-weight: 800;">{{ retirados }}</h1>
             </div>
-            <div style="font-size: 30px; opacity: 0.8;">⚠️</div>
+            <div style="opacity: 0.8; display: flex; align-items: center;"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></div>
         </div>
 
         <div style="background: #6f42c1; color: white; padding: 15px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 15px rgba(111,66,193,0.2);">
@@ -44,7 +44,7 @@
                 <h4 style="margin: 0; font-weight: 400; opacity: 0.9; text-transform: uppercase; font-size: 11px; letter-spacing: 1px;">Movimientos Totales</h4>
                 <h1 style="margin: 5px 0 0 0; font-size: 28px; font-weight: 800;">{{ movimientos }}</h1>
             </div>
-            <div style="font-size: 30px; opacity: 0.8;">📝</div>
+            <div style="opacity: 0.8; display: flex; align-items: center;"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></div>
         </div>
 
     </div>
@@ -53,7 +53,7 @@
 
         <div style="background: white; border-radius: 15px; border: 1px solid #eaeaea; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.03);">
             <div style="background: #f8f9fa; border-bottom: 1px solid #eaeaea; padding: 18px 25px; font-weight: bold; color: #004683; font-size: 16px; display: flex; align-items: center; gap: 10px;">
-                <span>🕒</span> Bitácora de Últimas Operaciones
+                <span style="display: flex; align-items: center;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></span> Bitácora de Últimas Operaciones
             </div>
             <table style="width: 100%; border-collapse: collapse; text-align: left;">
                 <thead>
@@ -79,26 +79,39 @@
             </table>
         </div>
 
-        <div style="display: flex; flex-direction: column; gap: 25px;">
-            <div style="background: white; border-radius: 15px; padding: 25px; border: 1px solid #eaeaea; box-shadow: 0 2px 12px rgba(0,0,0,0.03);">
-                <h3 style="margin-top: 0; color: #004683; font-size: 18px; margin-bottom: 25px; border-bottom: 2px solid #F29100; padding-bottom: 10px; display: flex; align-items: center; gap: 10px;">
-                    <span>⚡</span> Acciones de Gestión
-                </h3>
-                
-                <div style="display: flex; flex-direction: column; gap: 15px;">
-                    <a href="/entradas" style="background: #004683; color: white; padding: 14px; border-radius: 10px; text-align: center; text-decoration: none; font-weight: bold; font-size: 14px; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,70,131,0.2);" onmouseover="this.style.background='#005db1'" onmouseout="this.style.background='#004683'">
-                        ➕ REGISTRAR NUEVO INGRESO
-                    </a>
+     <div style="display: flex; flex-direction: column; gap: 25px;">
+    <div style="background: white; border-radius: 15px; padding: 25px; border: 1px solid #eaeaea; box-shadow: 0 2px 12px rgba(0,0,0,0.03);">
+        
+        <h3 style="margin-top: 0; color: #004683; font-size: 18px; margin-bottom: 25px; border-bottom: 2px solid #F29100; padding-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; text-align: center; width: 100%;">
+            </span> Acciones Rápidas
+        </h3>
+        
+        <div style="display: flex; flex-direction: column; gap: 15px; width: 100%;">
+            
+            <a href="/entradas" style="background: #004683; color: white; padding: 14px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 14px; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,70,131,0.2); display: flex; align-items: center; justify-content: center;" onmouseover="this.style.background='#005db1'" onmouseout="this.style.background='#004683'">
+                <span style="display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    REGISTRAR NUEVO INGRESO
+                </span>
+            </a>
 
-                    <a href="/traslados" style="background: white; color: #004683; padding: 14px; border-radius: 10px; text-align: center; text-decoration: none; font-weight: bold; font-size: 14px; border: 2px solid #004683; transition: all 0.3s;" onmouseover="this.style.background='#f0f7ff'" onmouseout="this.style.background='white'">
-                        🔄 EJECUTAR TRASLADO INTERNO
-                    </a>
+            <a href="/traslados" style="background: white; color: #004683; padding: 14px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 14px; border: 2px solid #004683; transition: all 0.3s; display: flex; align-items: center; justify-content: center;" onmouseover="this.style.background='#f0f7ff'" onmouseout="this.style.background='white'">
+                <span style="display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><polyline points="23 20 23 14 17 14"></polyline><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path></svg>
+                    EJECUTAR TRASLADO INTERNO
+                </span>
+            </a>
 
-                    <a href="/retiros" style="background: white; color: #dc3545; padding: 14px; border-radius: 10px; text-align: center; text-decoration: none; font-weight: bold; font-size: 14px; border: 2px solid #dc3545; opacity: 0.8; transition: all 0.3s;" onmouseover="this.style.opacity='1'; this.style.background='#fff5f5'" onmouseout="this.style.opacity='0.8'; this.style.background='white'">
-                        ❌ GESTIONAR BAJA DE ACTIVO
-                    </a>
-                </div>
-            </div>
+            <a href="/retiros" style="background: white; color: #dc3545; padding: 14px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 14px; border: 2px solid #dc3545; opacity: 0.8; transition: all 0.3s; display: flex; align-items: center; justify-content: center;" onmouseover="this.style.opacity='1'; this.style.background='#fff5f5'" onmouseout="this.style.opacity='0.8'; this.style.background='white'">
+                <span style="display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    GESTIONAR BAJA DE ACTIVO
+                </span>
+            </a>
+            
+        </div>
+    </div>
+</div>
             
             <p style="text-align: center; font-size: 11px; color: #bbb; text-transform: uppercase; letter-spacing: 2px; font-weight: 600;">
                 UFG · Activos Fijos · v2.1
