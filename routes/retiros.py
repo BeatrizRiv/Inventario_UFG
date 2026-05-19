@@ -35,9 +35,9 @@ def retiros():
         """, (id_activo,))
 
         cursor.execute("""
-            INSERT INTO movimientos (tipo, id_activo, detalle)
-            VALUES ('Retiro', %s, %s)
-        """, (id_activo, f'{motivo}. Responsable: {responsable_nombre}'))
+            INSERT INTO movimientos (tipo, id_activo, detalle, usuario)
+            VALUES ('Retiro', %s, %s, %s)
+        """, (id_activo, f'{motivo}. Responsable: {responsable_nombre}', session.get('usuario')))
 
         conn.commit()
         conn.close()

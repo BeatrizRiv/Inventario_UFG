@@ -7,7 +7,7 @@
 <form method="POST" class="form-box">
 
     <label>Seleccionar fecha</label>
-    <input type="date" name="fecha" required>
+    <input type="date" name="fecha" required oninvalid="this.setCustomValidity('Por favor, seleccione una fecha válida para generar el reporte.')" oninput="this.setCustomValidity('')">
 
     <button type="submit">Generar PDF</button>
 

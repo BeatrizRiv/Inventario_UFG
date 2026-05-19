@@ -61,9 +61,9 @@ def entradas():
                 break
 
         cursor.execute("""
-            INSERT INTO movimientos (tipo, id_activo, detalle)
-            VALUES ('Entrada', LAST_INSERT_ID(), %s)
-        """, (f'Ingreso de activo. Responsable: {responsable_nombre}',))
+            INSERT INTO movimientos (tipo, id_activo, detalle, usuario)
+            VALUES ('Entrada', LAST_INSERT_ID(), %s, %s)
+        """, (f'Ingreso de activo. Responsable: {responsable_nombre}', session.get('usuario')))
 
         conn.commit()
         conn.close()

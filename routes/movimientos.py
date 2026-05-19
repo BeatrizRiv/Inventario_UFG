@@ -22,11 +22,10 @@ def movimientos():
             m.tipo,
             m.fecha,
             m.detalle,
-            a.nombre AS activo,
-            r.nombre AS responsable_actual
+            m.usuario AS responsable_movimiento,
+            a.nombre AS activo
         FROM movimientos m
         JOIN activos_fijos a ON m.id_activo = a.id_activo
-        LEFT JOIN responsables r ON a.id_responsable = r.id_responsable
         WHERE 1=1
     """
 
@@ -60,4 +59,4 @@ def movimientos():
         m['responsable_nuevo'] = parse_responsable_nuevo(m.get('detalle'))
 
     conn.close()
-    return render_template("movimientos.html", movimientos=movimientos)
+    return render_template("movimientos.html", movimientos=movimientos, filtro_tipo=tipo, filtro_fecha=fecha)
