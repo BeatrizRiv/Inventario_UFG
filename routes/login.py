@@ -34,5 +34,5 @@ def login():
 @login_bp.route('/logout')
 def logout():
     session.clear()
-    flash("👋 Sesión cerrada correctamente")
+    flash("Sesión cerrada correctamente")
     return redirect(url_for('login.login'))

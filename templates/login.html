@@ -22,6 +22,9 @@
       box-shadow: 0px 12px 30px rgba(0,0,0,0.35);
       width: 400px;
       animation: fadeIn 1s ease-in-out;
+      display: flex;
+      flex-direction: column;
+      align-items: center; /* Centra todo dentro de la tarjeta blanca */
     }
 
     .login-container img {
@@ -40,11 +43,19 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      width: 100%; /* Asegura que el formulario ocupe el espacio para centrar a sus hijos */
+    }
+
+    /* Regla unificada para inputs, botón y alertas para que midan exactamente lo mismo */
+    .login-container input,
+    .login-container button,
+    .alert {
+      width: 100%;
+      max-width: 320px; /* Este es el ancho maestro */
+      box-sizing: border-box; /* Esto evita que el padding rompa el ancho total */
     }
 
     .login-container input {
-      width: 100%;
-      max-width: 320px;
       padding: 14px;
       margin: 12px 0;
       border: 1px solid #ccc;
@@ -54,9 +65,8 @@
     }
 
     .login-container button {
-      width: 100%;
-      max-width: 320px;
       padding: 14px;
+      margin-top: 12px;
       background: #004080;
       color: white;
       border: none;
@@ -71,6 +81,7 @@
       transform: scale(1.03);
     }
 
+    /* Estilos corregidos de la alerta */
     .alert {
       background: #ffe6e6;
       color: #a00;
@@ -78,11 +89,30 @@
       border-radius: 10px;
       margin-bottom: 15px;
       font-size: 14px;
+      /* Se eliminó el padding extra que la hacía más grande */
+    }
+    
+    .alert p {
+        margin: 5px 0; /* Limpia los márgenes por defecto de la etiqueta P */
     }
 
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(-20px); }
       to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Contenedor relativo solo para el input de la contraseña */
+    .password-wrapper {
+        position: relative; 
+        width: 100%; 
+        max-width: 320px; 
+        margin: 12px 0;
+    }
+
+    /* Sobrescribe el margen del input de password para que no se sume al del wrapper */
+    .password-wrapper input {
+        margin: 0;
+        padding-right: 40px; /* Espacio para el ojito */
     }
 
     .password-toggle {
@@ -144,21 +174,21 @@
 
     <form method="POST">
       <input type="text" name="usuario" placeholder="Usuario" required>
-      <div style="position: relative; width: 100%; max-width: 320px; margin: 12px 0;">
-        <input type="password" name="password" id="password" placeholder="Contraseña" required style="margin: 0; width: 100%; box-sizing: border-box; padding-right: 40px;">
+      
+      <div class="password-wrapper">
+        <input type="password" name="password" id="password" placeholder="Contraseña" required>
         <div id="togglePassword" class="password-toggle" title="Mostrar/Ocultar contraseña">
-          <!-- Ojo cerrado (password oculto) -->
           <svg class="eye-closed" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
             <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
             <line x1="1" y1="1" x2="23" y2="23"></line>
           </svg>
-          <!-- Ojo abierto (password visible) -->
           <svg class="eye-open" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
             <circle cx="12" cy="12" r="3"></circle>
           </svg>
         </div>
       </div>
+
       <button type="submit">Ingresar</button>
     </form>
 
