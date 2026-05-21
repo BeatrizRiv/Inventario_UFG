@@ -34,10 +34,13 @@ def retiros():
             WHERE id_activo=%s
         """, (id_activo,))
 
+        motivo = motivo.strip()
+        detalle = f'Activo retirado del inventario. Responsable al retiro: {responsable_nombre}'
+
         cursor.execute("""
-            INSERT INTO movimientos (tipo, id_activo, detalle, usuario)
-            VALUES ('Retiro', %s, %s, %s)
-        """, (id_activo, f'{motivo}. Responsable: {responsable_nombre}', session.get('usuario')))
+            INSERT INTO movimientos (tipo, id_activo, detalle, motivo, usuario)
+            VALUES (%s, %s, %s, %s, %s)
+        """, ('Retiro', id_activo, detalle, motivo, session.get('usuario')))
 
         conn.commit()
         conn.close()

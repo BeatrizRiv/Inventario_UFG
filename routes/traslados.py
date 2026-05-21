@@ -60,7 +60,7 @@ def traslados():
 
     if request.method == 'POST':
         codigo = request.form.get('codigo')
-        descripcion_cambio = request.form.get('descripcion_cambio', '').strip()
+        motivo = request.form.get('motivo', '').strip() or None
 
         cursor.execute("SELECT * FROM activos_fijos WHERE codigo=%s", (codigo,))
         activo = cursor.fetchone()
@@ -114,33 +114,29 @@ def traslados():
             conn.close()
             return redirect(request.url)
 
-        count_cambios = len(cambios)
-        cambio_area_resp = any(c.startswith("Área") or c.startswith("Responsable") for c in cambios)
+        cambio_ubicacion = any(
+            c.startswith("Área") or c.startswith("Responsable") or c.startswith("Uso")
+            for c in cambios
+        )
         cambio_estado = any(c.startswith("Estado") for c in cambios)
 
-        if count_cambios >= 2:
-            tipo_mov = 'Varios'
-        elif cambio_estado:
+        if cambio_estado and not cambio_ubicacion:
             tipo_mov = 'Estado'
-        elif cambio_area_resp:
-            tipo_mov = 'Traslado'
+        elif cambio_ubicacion:
+            tipo_mov = 'Ubicación'
         else:
-            tipo_mov = 'Actualización'
+            tipo_mov = 'Estado'
 
         query_update = f"UPDATE activos_fijos SET {', '.join(updates)} WHERE id_activo=%s"
         valores_update.append(id_activo)
         cursor.execute(query_update, tuple(valores_update))
 
-        # AQUÍ ESTÁ LA MAGIA PARA EL MOTIVO OPCIONAL
-        if descripcion_cambio:
-            detalle_str = f"Cambio registrado. {', '.join(cambios)}. Motivo: {descripcion_cambio}"
-        else:
-            detalle_str = f"Cambio registrado. {', '.join(cambios)}."
+        detalle_str = ', '.join(cambios)
 
         cursor.execute("""
-            INSERT INTO movimientos (tipo, id_activo, detalle, usuario)
-            VALUES (%s, %s, %s, %s)
-        """, (tipo_mov, id_activo, detalle_str, session.get('usuario')))
+            INSERT INTO movimientos (tipo, id_activo, detalle, motivo, usuario)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (tipo_mov, id_activo, detalle_str, motivo, session.get('usuario')))
 
         conn.commit()
         conn.close()

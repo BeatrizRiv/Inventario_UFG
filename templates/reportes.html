@@ -2,33 +2,200 @@
 
 {% block content %}
 
-<h2> Generar reporte</h2>
+<div class="reporte-container">
+    <div class="reporte-header">
+        <h2>Panel de Reportes y Auditoría</h2>
+        <p>Seleccione los filtros deseados para generar el documento oficial.</p>
+    </div>
 
-<form method="POST" class="form-box">
+    <form method="POST" action="{{ url_for('reportes.reportes') }}" class="reporte-form">
+        
+        <fieldset class="form-section">
+            <legend>Filtros de Temporalidad</legend>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Adquisición Física (Desde - Hasta)</label>
+                    <div class="date-group">
+                        <input type="date" name="adquisicion_inicio" class="input-control">
+                        <span> - </span>
+                        <input type="date" name="adquisicion_fin" class="input-control">
+                    </div>
+                    <small>Filtrar por la fecha en que se compró el equipo.</small>
+                </div>
 
-    <label>Seleccionar fecha</label>
-    <input type="date" name="fecha" required oninvalid="this.setCustomValidity('Por favor, seleccione una fecha válida para generar el reporte.')" oninput="this.setCustomValidity('')">
+                <div class="form-group">
+                    <label>Registro en Sistema (Desde - Hasta)</label>
+                    <div class="date-group">
+                        <input type="date" name="registro_inicio" class="input-control">
+                        <span> - </span>
+                        <input type="date" name="registro_fin" class="input-control">
+                    </div>
+                    <small>Filtrar por la fecha del movimiento en la bitácora.</small>
+                </div>
+            </div>
+        </fieldset>
 
-    <button type="submit">Generar PDF</button>
+        <fieldset class="form-section">
+            <legend>Filtros de Clasificación</legend>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Tipo de Activo</label>
+                    <select name="id_tipo" class="input-control">
+                        <option value="">-- Todos los tipos --</option>
+                        {% for tipo in tipos %}
+                        <option value="{{ tipo.id_tipo }}">{{ tipo.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-</form>
+                <div class="form-group">
+                    <label>Área Asignada</label>
+                    <select name="id_area" class="input-control">
+                        <option value="">-- Todas las áreas --</option>
+                        {% for area in areas %}
+                        <option value="{{ area.id_area }}">{{ area.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </fieldset>
+
+        <div class="form-actions">
+            <button type="reset" class="btn-secondary">Limpiar Filtros</button>
+            <button type="submit" class="btn-primary">Generar PDF Oficial</button>
+        </div>
+
+    </form>
+</div>
 
 <style>
-.form-box {
-    background: linear-gradient(to right, #b1c0c6, #b1c0c6);
-    padding: 20px;
-    border-radius: 12px;
-    max-width: 400px;
-}
+    /* Estilos profesionales para el panel de reportes */
+    .reporte-container {
+        background: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        padding: 30px;
+        max-width: 900px;
+        margin: 0 auto;
+        border-top: 5px solid #00427A; /* Azul institucional UFG */
+    }
 
-button {
-    margin-top: 15px;
-    padding: 10px;
-    background-color: #0056A6;
-    color: white;
-    border: none;
-    border-radius: 6px;
-}
+    .reporte-header h2 {
+        color: #00427A;
+        margin-bottom: 5px;
+    }
+
+    .reporte-header p {
+        color: #6c757d;
+        margin-bottom: 25px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 15px;
+    }
+
+    .form-section {
+        border: none;
+        margin-bottom: 25px;
+        padding: 0;
+    }
+
+    .form-section legend {
+        font-weight: 600;
+        color: #333;
+        font-size: 1.1rem;
+        margin-bottom: 15px;
+        width: 100%;
+    }
+
+    .form-row {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .form-group {
+        flex: 1;
+        min-width: 250px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group label {
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: #495057;
+        font-size: 0.95rem;
+    }
+
+    .form-group small {
+        color: #888;
+        margin-top: 5px;
+        font-size: 0.8rem;
+    }
+
+    .input-control {
+        padding: 10px;
+        border: 1px solid #ced4da;
+        border-radius: 5px;
+        font-family: inherit;
+        font-size: 0.95rem;
+        transition: border-color 0.3s;
+    }
+
+    .input-control:focus {
+        outline: none;
+        border-color: #00427A;
+    }
+
+    .date-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .date-group .input-control {
+        flex: 1;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+    }
+
+    .btn-primary {
+        background-color: #00427A;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .btn-primary:hover {
+        background-color: #002d54;
+    }
+
+    .btn-secondary {
+        background-color: #f8f9fa;
+        color: #495057;
+        border: 1px solid #ced4da;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .btn-secondary:hover {
+        background-color: #e2e6ea;
+    }
 </style>
 
 {% endblock %}

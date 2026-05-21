@@ -7,7 +7,8 @@
     <select name="tipo">
         <option {% if filtro_tipo == 'Todos' or not filtro_tipo %}selected{% endif %}>Todos</option>
         <option {% if filtro_tipo == 'Entrada' %}selected{% endif %}>Entrada</option>
-        <option {% if filtro_tipo == 'Traslado' %}selected{% endif %}>Traslado</option>
+        <option {% if filtro_tipo == 'Ubicación' %}selected{% endif %}>Ubicación</option>
+        <option {% if filtro_tipo == 'Estado' %}selected{% endif %}>Estado</option>
         <option {% if filtro_tipo == 'Retiro' %}selected{% endif %}>Retiro</option>
     </select>
 
@@ -17,43 +18,42 @@
 </form>
 
 {% if movimientos %}
+<div class="tabla-wrapper">
 <table class="tabla">
-    <tr>
-        <th>Código</th>
-        <th>Tipo</th>
-        <th>Activo</th>
-        <th>Fecha</th>
-        <th>Detalle</th>
-        <th>Responsable del movimiento</th>
-    </tr>
-
+    <thead>
+        <tr>
+            <th>Código</th>
+            <th>Tipo</th>
+            <th>Activo</th>
+            <th>Área</th>
+            <th>Fecha</th>
+            <th>Detalle</th>
+            <th>Motivo</th>
+            <th>Usuario</th>
+        </tr>
+    </thead>
+    <tbody>
     {% for m in movimientos %}
-    <tr>
-        <td>{{ m.codigo }}</td>
-
-        <td>
-            {% if m.tipo == 'Entrada' %}
-                <span class="badge entrada">Entrada</span>
-            {% elif m.tipo == 'Traslado' %}
-                <span class="badge traslado">Traslado</span>
-            {% elif m.tipo == 'Retiro' %}
-                <span class="badge retiro">Retiro</span>
-            {% elif m.tipo == 'Actualización' %}
-                <span class="badge actualizacion">Actualización</span>
-            {% endif %}
-        </td>
-
-        <td>{{ m.activo }}</td>
-        <td>{{ m.fecha }}</td>
-        <td>{{ m.detalle }}</td>
-        <td>{{ m.responsable_movimiento or '-' }}</td>
-    </tr>
+        <tr>
+            <td class="col-codigo">{{ m.codigo }}</td>
+            <td>
+                <span class="badge {{ m.tipo|lower|replace(' ', '-')|replace('ó', 'o') }}">{{ m.tipo }}</span>
+            </td>
+            <td>{{ m.activo }}</td>
+            <td>{{ m.nombre_area or '-' }}</td>
+            <td class="col-fecha">{{ m.fecha | format_fecha_hora }}</td>
+            <td class="col-detalle">{{ m.detalle or '-' }}</td>
+            <td class="col-motivo">{{ m.motivo or '-' }}</td>
+            <td>{{ m.usuario or '-' }}</td>
+        </tr>
     {% endfor %}
+    </tbody>
 </table>
+</div>
 {% else %}
-<div class="mensaje-vacio" style="text-align: center; padding: 40px; background: white; border-radius: 10px; color: #666; border: 1px dashed #ccc; margin-top: 20px;">
-    <h3 style="color: #0056A6; margin-bottom: 10px;">No se encontraron resultados</h3>
-    <p style="font-size: 16px;">No hay registros de movimientos (ingresos, traslados o retiros) para la fecha y los filtros seleccionados.</p>
+<div class="mensaje-vacio">
+    <h3>No se encontraron resultados</h3>
+    <p>No hay registros de movimientos para la fecha y los filtros seleccionados.</p>
 </div>
 {% endif %}
 
@@ -68,67 +68,123 @@
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
+    flex-wrap: wrap;
 }
 
 .filtros select,
 .filtros input {
-    padding: 8px;
+    padding: 8px 12px;
     border-radius: 6px;
     border: 2px solid #0056A6;
+    font-size: 14px;
 }
 
 .filtros button {
     background-color: #F47C20;
     color: white;
     border: none;
-    padding: 8px 15px;
+    padding: 8px 18px;
     border-radius: 6px;
     cursor: pointer;
+    font-weight: 600;
+}
+
+.filtros button:hover {
+    background-color: #d96a10;
+}
+
+.tabla-wrapper {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
 }
 
 .tabla {
     width: 100%;
     border-collapse: collapse;
-    background: white;
-    border-radius: 10px;
-    overflow: hidden;
+}
+
+.tabla thead {
+    background: #0056A6;
+    color: white;
 }
 
 .tabla th {
-    background: #0056A6;
-    color: white;
-    padding: 12px;
+    padding: 14px 12px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
 }
 
 .tabla td {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-    white-space: normal;
-    height: auto;
+    padding: 12px;
+    border-bottom: 1px solid #e8e8e8;
+    vertical-align: top;
+    font-size: 14px;
+    line-height: 1.45;
 }
 
-.tabla tr:hover {
-    background: #f2f2f2;
+.tabla tbody tr:hover {
+    background: #f7fafc;
+}
+
+.tabla tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.col-codigo {
+    font-weight: 600;
+    color: #004683;
+    white-space: nowrap;
+}
+
+.col-fecha {
+    white-space: nowrap;
+    color: #555;
+    font-size: 13px;
+}
+
+.col-detalle,
+.col-motivo {
+    max-width: 220px;
+    word-break: break-word;
+}
+
+.col-motivo {
+    color: #444;
+    font-style: normal;
 }
 
 .badge {
-    padding: 5px 10px;
+    display: inline-block;
+    padding: 4px 10px;
     border-radius: 20px;
     color: white;
-    font-size: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
 }
 
-.entrada {
-    background-color: #28a745;
+.badge.entrada { background-color: #28a745; }
+.badge.ubicacion { background-color: #ffc107; color: #333; }
+.badge.estado { background-color: #007bff; }
+.badge.retiro { background-color: #dc3545; }
+
+.mensaje-vacio {
+    text-align: center;
+    padding: 40px;
+    background: white;
+    border-radius: 10px;
+    color: #666;
+    border: 1px dashed #ccc;
+    margin-top: 20px;
 }
 
-.traslado {
-    background-color: #ffc107;
-    color: black;
-}
-
-.retiro {
-    background-color: #dc3545;
+.mensaje-vacio h3 {
+    color: #0056A6;
+    margin-bottom: 10px;
 }
 
 </style>
