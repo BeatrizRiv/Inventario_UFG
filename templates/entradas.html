@@ -28,6 +28,7 @@
     <div class="campo">
         <label>Responsable</label>
         <select name="id_responsable" required>
+            <option value="">Seleccione</option>
             {% for r in responsables %}
             <option value="{{ r.id_responsable }}">{{ r.nombre }}</option>
             {% endfor %}
@@ -60,7 +61,7 @@
 
     <div class="campo">
         <label>Estado</label>
-        <select name="estado">
+        <select name="estado" required>
             <option value="Disponible">Disponible</option>
             <option value="En uso">En uso</option>
             <option value="Mantenimiento">Mantenimiento</option>
@@ -72,36 +73,46 @@
 <div class="row-2">
     <div class="campo">
         <label>Código</label>
-        <input type="text" name="codigo" required>
+        <input type="text" name="codigo" class="input-maxlength" required maxlength="20" pattern="^[a-zA-Z0-9\-]+$" title="Solo letras, números y guiones">
+        <small class="aviso-limite text-danger d-none">Límite de caracteres alcanzado</small>
     </div>
 
     <div class="campo">
         <label>Nombre</label>
-        <input type="text" name="nombre" required>
+        <input type="text" name="nombre" class="input-maxlength" required maxlength="70">
+        <small class="aviso-limite text-danger d-none">Límite de caracteres alcanzado</small>
     </div>
 </div>
 
 <div class="row-3">
     <div class="campo">
         <label>Marca</label>
-        <input type="text" name="marca">
+        <input type="text" name="marca" class="input-maxlength" required maxlength="50">
+        <small class="aviso-limite text-danger d-none">Límite de caracteres alcanzado</small>
     </div>
 
     <div class="campo">
         <label>Modelo</label>
-        <input type="text" name="modelo">
+        <input type="text" name="modelo" class="input-maxlength" required maxlength="50">
+        <small class="aviso-limite text-danger d-none">Límite de caracteres alcanzado</small>
     </div>
 
     <div class="campo">
         <label>Serie</label>
-        <input type="text" name="serie">
+        <input type="text" name="serie" class="input-maxlength" required maxlength="50">
+        <small class="aviso-limite text-danger d-none">Límite de caracteres alcanzado</small>
     </div>
 </div>
 
 <div class="row-2">
     <div class="campo">
         <label>Valor ($)</label>
-        <input type="number" name="valor" step="0.01">
+        <input type="number" name="valor" id="valor" required min="0.01" max="500000" step="0.01"
+               title="Ingrese un valor entre $0.01 y $500,000.00"
+               oninput="validarValorInput(this)">
+        {% if error_valor %}
+        <small class="error-campo">{{ error_valor }}</small>
+        {% endif %}
     </div>
 
     <div class="campo">
@@ -119,7 +130,13 @@
 
 <div class="campo">
     <label>Descripción</label>
-    <textarea name="descripcion"></textarea>
+    <textarea name="descripcion" class="input-maxlength" maxlength="250"></textarea>
+    <small class="aviso-limite text-danger d-none">Límite de caracteres alcanzado</small>
+</div>
+
+<div class="campo">
+    <label>Motivo del ingreso</label>
+    <textarea name="motivo" rows="2" placeholder="Justificación u observaciones del ingreso (opcional)"></textarea>
 </div>
 
 <div class="botones">
@@ -215,9 +232,68 @@ button[type="submit"]:hover {
     background-color: #666;
 }
 
+.error-campo {
+    color: #dc3545;
+    font-size: 12px;
+    margin-top: 4px;
+    font-weight: 600;
+}
+
+.d-none {
+    display: none !important;
+}
+
+.text-danger {
+    color: #dc3545;
+}
+
+.aviso-limite {
+    display: inline-flex;
+    align-items: center;
+    font-size: 12px;
+    margin-top: 4px;
+    font-weight: 600;
+}
+
+.aviso-limite::before {
+    content: '';
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-right: 6px;
+    flex-shrink: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%23dc3545' d='M10 2 19 18H1 10 2z'/%3E%3Cpath fill='none' stroke='%23fff' stroke-width='1.6' stroke-linecap='round' d='M10 7v5M10 14h.01'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.input-maxlength.limite-alcanzado,
+.input-maxlength.limite-alcanzado:focus {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.15);
+}
+
 </style>
 
 <script>
+const VALOR_MIN = 0.01;
+const VALOR_MAX = 500000;
+
+function validarValorInput(el) {
+    let raw = String(el.value);
+    if (raw.length > 12) {
+        el.value = raw.slice(0, 12);
+        raw = el.value;
+    }
+    const n = parseFloat(raw);
+    if (raw !== '' && !isNaN(n)) {
+        if (n > VALOR_MAX) el.value = String(VALOR_MAX);
+        if (n < VALOR_MIN && raw.length > 3) el.setCustomValidity('El valor mínimo es $0.01');
+        else el.setCustomValidity('');
+    }
+}
+
 function mostrarUbicacion() {
     let select = document.getElementById("area");
     let ubicacion = select.options[select.selectedIndex].getAttribute("data-ubicacion");
@@ -229,6 +305,34 @@ function mostrarDepreciacion() {
     let dep = select.options[select.selectedIndex].getAttribute("data-dep");
     document.getElementById("depreciacion").value = dep ? dep + "%" : "";
 }
+
+function actualizarAvisoMaxlength(campo) {
+    const max = parseInt(campo.getAttribute('maxlength'), 10);
+    const aviso = campo.nextElementSibling;
+    if (!max || !aviso || !aviso.classList.contains('aviso-limite')) return;
+
+    const alLimite = campo.value.length >= max;
+    campo.classList.toggle('limite-alcanzado', alLimite);
+    aviso.classList.toggle('d-none', !alLimite);
+}
+
+function inicializarAvisosMaxlength() {
+    document.querySelectorAll('.input-maxlength').forEach((campo) => {
+        campo.addEventListener('input', () => actualizarAvisoMaxlength(campo));
+        actualizarAvisoMaxlength(campo);
+    });
+
+    const form = document.querySelector('.form-box');
+    if (form) {
+        form.addEventListener('reset', () => {
+            setTimeout(() => {
+                document.querySelectorAll('.input-maxlength').forEach(actualizarAvisoMaxlength);
+            }, 0);
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', inicializarAvisosMaxlength);
 </script>
 
 {% endblock %}

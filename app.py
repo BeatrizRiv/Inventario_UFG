@@ -7,6 +7,11 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'clave-temporal-muy-larga-para-dev')
 
+from utils.fechas import format_fecha, format_fecha_hora
+
+app.jinja_env.filters['format_fecha'] = format_fecha
+app.jinja_env.filters['format_fecha_hora'] = format_fecha_hora
+
 from routes.dashboard import dashboard_bp
 from routes.gestion import gestion_bp
 from routes.entradas import entradas_bp

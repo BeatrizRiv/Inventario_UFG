@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, session, redirect, url_for, request
 from db import conectar
+from utils.depreciacion import calcular_depreciacion_actual
 
 gestion_bp = Blueprint('gestion', __name__)
 
@@ -60,39 +61,27 @@ def detalle_activo(codigo):
         conn.close()
         return redirect(url_for('gestion.gestion'))
 
+    calculo = calcular_depreciacion_actual(
+        activo['valor'],
+        activo['depreciacion'],
+        activo['fecha_ingreso'],
+    )
+    activo['depreciacion_acumulada'] = calculo['acumulada']
+    activo['valor_contable_actual'] = calculo['valor_actual']
+
     cursor.execute("""
-        SELECT m.*
+        SELECT
+            m.fecha,
+            m.tipo,
+            m.detalle,
+            m.motivo,
+            m.usuario
         FROM movimientos m
         JOIN activos_fijos a ON m.id_activo = a.id_activo
         WHERE a.codigo = %s
         ORDER BY m.fecha DESC
     """, (codigo,))
     historial = cursor.fetchall()
-
-    def extraer_responsable(detalle):
-        if not detalle:
-            return ''
-        import re
-        match = re.search(r'Responsable:\s*[^\-]+->\s*([^.;\n]+)', detalle)
-        if match:
-            return match.group(1).strip()
-        match = re.search(r'Responsable:\s*([^.;\n]+)', detalle)
-        return match.group(1).strip() if match else ''
-
-    for m in historial:
-        # Rellenar responsable: primero lo que ya está en el movimiento,
-        # luego intentar extraerlo del texto `detalle`, finalmente usar el responsable actual del activo.
-        responsable_existente = m.get('responsable')
-        responsable_extraido = extraer_responsable(m.get('detalle'))
-        m['responsable'] = responsable_existente or responsable_extraido or activo.get('responsable') or ''
-
-        # Preparar campo de detalle/ubicación según lo que tenga el movimiento
-        if m.get('ubicacion_destino'):
-            m['detalle_ubicacion'] = m.get('ubicacion_destino')
-        elif m.get('estado_nuevo'):
-            m['detalle_ubicacion'] = f"Estado: {m.get('estado_nuevo')}"
-        else:
-            m['detalle_ubicacion'] = m.get('detalle', '')
 
     conn.close()
     return render_template('detalle_activo.html', activo=activo, historial=historial)

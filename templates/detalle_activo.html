@@ -37,12 +37,20 @@
             </div>
 
             <div class="dato-item">
-                <span class="dato-label">Valor económico ($)</span>
-                <span class="dato-valor text-verde">{{ activo.valor }}</span>
+                <span class="dato-label">Valor original ($)</span>
+                <span class="dato-valor">{{ "%.2f"|format(activo.valor|float) }}</span>
+            </div>
+            <div class="dato-item">
+                <span class="dato-label">Depreciación acumulada ($)</span>
+                <span class="dato-valor text-danger">{{ "%.2f"|format(activo.depreciacion_acumulada|float) }}</span>
+            </div>
+            <div class="dato-item">
+                <span class="dato-label">Valor contable actual ($)</span>
+                <span class="dato-valor text-success">{{ "%.2f"|format(activo.valor_contable_actual|float) }}</span>
             </div>
             <div class="dato-item">
                 <span class="dato-label">Fecha de registro</span>
-                <span class="dato-valor">{{ activo.fecha_ingreso }}</span>
+                <span class="dato-valor">{{ activo.fecha_ingreso | format_fecha }}</span>
             </div>
             <div class="dato-item">
                 <span class="dato-label">Área asignada</span>
@@ -72,21 +80,23 @@
             <table class="tabla-historial">
                 <thead>
                     <tr>
-                        <th>Fecha y Hora</th>
-                        <th>Tipo de Evento</th>
-                        <th>Responsable</th>
-                        <th>Detalle de la Operación</th>
+                        <th class="col-fecha">Fecha y Hora</th>
+                        <th class="col-tipo">Tipo de Evento</th>
+                        <th class="col-responsable">Responsable</th>
+                        <th class="col-detalle">Detalle de la Operación</th>
+                        <th class="col-motivo">Motivo</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for m in historial %}
+                    {% for movimiento in historial %}
                     <tr>
-                        <td class="fecha-celda">{{ m.fecha }}</td>
-                        <td>
-                            <span class="badge-evento">{{ m.tipo or 'N/A' }}</span>
+                        <td class="fecha-celda col-fecha">{{ movimiento.fecha | format_fecha_hora }}</td>
+                        <td class="col-tipo">
+                            <span class="badge-evento">{{ movimiento.tipo or 'N/A' }}</span>
                         </td>
-                        <td class="responsable-celda">{{ m.responsable or '-' }}</td>
-                        <td class="detalle-celda">{{ m.detalle_ubicacion or m.detalle or '-' }}</td>
+                        <td class="responsable-celda col-responsable">{{ movimiento.usuario or '-' }}</td>
+                        <td class="detalle-celda col-detalle">{{ movimiento.detalle or '-' }}</td>
+                        <td class="motivo-celda col-motivo">{{ movimiento.motivo if movimiento.motivo else '-' }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -105,7 +115,7 @@
 
 .expediente-container {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    max-width: 1100px;
+    max-width: 1280px;
     margin: 0 auto;
     color: #333;
     padding-bottom: 50px;
@@ -203,6 +213,14 @@
     color: #28a745;
     font-weight: 700;
 }
+.text-danger {
+    color: #dc3545;
+    font-weight: 700;
+}
+.text-success {
+    color: #28a745;
+    font-weight: 700;
+}
 
 
 .descripcion-box {
@@ -242,22 +260,31 @@
 .tabla-historial {
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed;
 }
 .tabla-historial th {
     background-color: #004683;
     color: white;
-    padding: 16px 20px;
+    padding: 14px 12px;
     text-align: left;
-    font-size: 13px;
+    font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 .tabla-historial td {
-    padding: 16px 20px;
+    padding: 14px 12px;
     border-bottom: 1px solid #f0f0f0;
-    font-size: 14px;
+    font-size: 13px;
     color: #444;
+    vertical-align: top;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
+.tabla-historial .col-fecha { width: 14%; }
+.tabla-historial .col-tipo { width: 12%; }
+.tabla-historial .col-responsable { width: 14%; }
+.tabla-historial .col-detalle { width: 32%; }
+.tabla-historial .col-motivo { width: 28%; }
 .tabla-historial tr:hover td {
     background-color: #f9fbfc;
 }
@@ -280,8 +307,11 @@
     letter-spacing: 0.5px;
 }
 .detalle-celda {
-    font-style: italic;
+    color: #444;
+}
+.motivo-celda {
     color: #555;
+    font-size: 13px;
 }
 
 

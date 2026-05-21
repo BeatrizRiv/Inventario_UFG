@@ -37,13 +37,13 @@ def dashboard():
     movimientos = cursor.fetchone()['movimientos']
 
     cursor.execute("""
-        SELECT m.tipo, m.fecha, a.nombre AS activo
+        SELECT m.tipo, a.codigo AS codigo_activo, m.fecha
         FROM movimientos m
         JOIN activos_fijos a ON m.id_activo = a.id_activo
-        ORDER BY m.fecha DESC, m.id_movimiento DESC
+        ORDER BY m.fecha DESC
         LIMIT 5
     """)
-    ultimos = cursor.fetchall()
+    ultimos_movimientos = cursor.fetchall()
 
     conn.close()
 
@@ -53,5 +53,5 @@ def dashboard():
         activos=activos,
         retirados=retiros if False else retirados,  
         movimientos=movimientos,
-        ultimos=ultimos
+        ultimos_movimientos=ultimos_movimientos
     )

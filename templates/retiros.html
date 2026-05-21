@@ -2,25 +2,91 @@
 
 {% block content %}
 
-<h2 style="color:#004080; margin-bottom:20px;"> Retiro de activos</h2>
+<h2 class="titulo">Retiro de activos</h2>
 
-<div style="background:white; padding:30px; border-radius:15px; max-width:500px;">
+<div class="form-card">
 
-   
-    <form method="POST" style="display:flex; flex-direction:column; gap:15px;">
+    <form method="POST" class="form-retiro">
 
-        <input type="text" name="codigo" placeholder="Código del activo"
-               style="padding:12px; border-radius:10px; border:1px solid #ccc;">
+        <div class="campo">
+            <label for="codigo">Código del activo</label>
+            <input type="text" id="codigo" name="codigo" placeholder="Ej: LAP-001" required>
+        </div>
 
-        <input type="text" name="motivo" placeholder="Motivo del retiro"
-               style="padding:12px; border-radius:10px; border:1px solid #ccc;">
+        <div class="campo">
+            <label for="motivo">Motivo del retiro</label>
+            <textarea id="motivo" name="motivo" rows="3" placeholder="Indique la justificación del retiro" required></textarea>
+        </div>
 
-        <button style="background:#0056A6; color:white; border:none; padding:12px; border-radius:10px;">
-            Retirar activo
-        </button>
+        <button type="submit" class="btn-retirar">Retirar activo</button>
 
     </form>
 
 </div>
+
+<style>
+
+.titulo {
+    color: #004080;
+    margin-bottom: 20px;
+}
+
+.form-card {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 520px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.form-retiro {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.campo label {
+    font-weight: 600;
+    color: #0056A6;
+    font-size: 14px;
+}
+
+.campo input,
+.campo textarea {
+    padding: 12px;
+    border-radius: 8px;
+    border: 2px solid #0056A6;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.campo input:focus,
+.campo textarea:focus {
+    border-color: #F47C20;
+    outline: none;
+}
+
+.btn-retirar {
+    background: #0056A6;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 4px;
+}
+
+.btn-retirar:hover {
+    background: #004683;
+}
+
+</style>
 
 {% endblock %}

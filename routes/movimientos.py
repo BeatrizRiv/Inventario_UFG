@@ -1,4 +1,3 @@
-import re
 from flask import Blueprint, render_template, request, session, redirect, url_for
 from db import conectar
 
@@ -17,15 +16,18 @@ def movimientos():
     fecha = request.values.get('fecha')
 
     query = """
-        SELECT 
+        SELECT
             a.codigo,
+            a.nombre AS activo,
+            ar.nombre_area,
             m.tipo,
             m.fecha,
             m.detalle,
-            m.usuario AS responsable_movimiento,
-            a.nombre AS activo
+            m.motivo,
+            m.usuario
         FROM movimientos m
         JOIN activos_fijos a ON m.id_activo = a.id_activo
+        LEFT JOIN areas ar ON a.id_area = ar.id_area
         WHERE 1=1
     """
 
@@ -44,19 +46,10 @@ def movimientos():
     cursor.execute(query, tuple(valores))
     movimientos = cursor.fetchall()
 
-    def parse_responsable_nuevo(detalle):
-        if not detalle:
-            return ''
-
-        match = re.search(r'Responsable:\s*[^\-]+->\s*([^.;\n]+)', detalle)
-        if match:
-            return match.group(1).strip()
-
-        match = re.search(r'Responsable:\s*([^.;\n]+)', detalle)
-        return match.group(1).strip() if match else ''
-
-    for m in movimientos:
-        m['responsable_nuevo'] = parse_responsable_nuevo(m.get('detalle'))
-
     conn.close()
-    return render_template("movimientos.html", movimientos=movimientos, filtro_tipo=tipo, filtro_fecha=fecha)
+    return render_template(
+        "movimientos.html",
+        movimientos=movimientos,
+        filtro_tipo=tipo,
+        filtro_fecha=fecha,
+    )
